@@ -209,20 +209,16 @@ Criteria: real API or stable structure · archive depth ≥ 1 year · free tier 
 covers the watchlist · clean timestamps · terms permit storage ·
 **distinct underlying provider**.
 
-| Source | Status | Notes |
-|---|---|---|
-| Alpaca | Tested ✅ | Works; ≥1yr archive. **100% Benzinga** — counts as one provider |
-| Finnhub | Candidate | 60 calls/min; ~1yr history on free tier |
-| Alpha Vantage | Candidate | 1000 articles/call; per-ticker relevance score; 25 req/day |
-| Marketaux | Candidate | Per-entity sentiment + passage highlights; ~100 req/day |
-| Financial Modeling Prep | Candidate | 250 calls/day; ~5yr history |
-| NewsData.io | Candidate | 200 credits/day; no ticker tagging |
-| GNews | Candidate | 100 req/day; 12h delay; 10 articles/request |
-| GDELT | Stretch | Unlimited, deep archive, but research-grade |
-| SEC EDGAR | Stretch | Free forever, exact attribution, but filings ≠ news |
+**FINAL — three sources, locked Aug 6. All tested end to end.**
 
-> TODO: final 5 not yet selected. Docs lie about archive depth — verify each one
-> by pulling a real article from a year ago before committing.
+| Source | Role | Auth | Timestamp | URLs | Notes |
+|---|---|---|---|---|---|
+| **Alpha Vantage** | Backfill | `apikey` query param | `YYYYMMDDTHHMM` | Real publisher | Deepest archive; per-ticker `relevance_score`; 25 req/day but 1000 articles/call; returns 200 on errors |
+| **Finnhub** | Daily pull | `X-Finnhub-Token` header | Unix int | Finnhub redirect | 60 calls/min; ~1yr history; ~200-250 article response cap, no pagination; one ticker per call |
+| **Alpaca** | Benzinga feed | Two `APCA-` headers | ISO 8601 | Real publisher | 100% Benzinga; multi-symbol array; needs `include_content=true` |
+
+Rejected after research (no test needed): Marketaux, Financial Modeling Prep,
+NewsData.io, GNews, GDELT, SEC EDGAR. All viable; none added a *new* problem class.
 
 ---
 
@@ -267,3 +263,5 @@ covers the watchlist · clean timestamps · terms permit storage ·
 | Aug 6 | Delete Dwindle from resume once this ships | An unexplainable project poisons trust in the whole resume |
 | Aug 6 | Email digest replaces frontend as primary interface | Slots into an existing pre-market habit; subscriber/open-rate metrics are real and provable; scheduling, idempotency, and delivery failure are better engineering than rendering a table. Cost: gives up the React learning goal, now a stretch |
 | Aug 6 | Watchlist locked at 12 tech tickers | Selected on news volume and naming clarity, not growth outlook — the criterion is whether a stable 30-day baseline is possible |
+| Aug 6 | Source list closed at 3, not 4-6 | Alpaca, Finnhub, Alpha Vantage already give three auth styles, three response shapes, two timestamp formats, one unusable-URL source, and one relevance score. A fourth costs a session and adds no new problem class. Alpaca kept despite Benzinga overlap with Finnhub — that overlap IS the dedupe problem |
+| Aug 6 | 2σ anomaly rule downgraded to a hypothesis | Vendor sentiment is compressed and skewed positive, so σ-based bands are twitchy and asymmetric. Plot real distributions first; percentile thresholds (top/bottom 10%) are the likely replacement |
