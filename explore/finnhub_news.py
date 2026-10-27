@@ -2,6 +2,8 @@ import os
 import requests
 from dotenv import load_dotenv
 from pathlib import Path
+import datetime
+
 load_dotenv(Path(__file__).parent.parent / ".env")
 key_id = os.getenv("FINNHUB_KEY")
 

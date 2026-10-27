@@ -2,6 +2,7 @@ import os
 import requests
 from dotenv import load_dotenv
 from pathlib import Path
+import datetime
 
 load_dotenv(Path(__file__).parent.parent / ".env")
 key_id = os.getenv("ALPACA_KEY_ID")
@@ -12,5 +13,5 @@ params = {"symbols":"AAPL", "start":"2025-08-05", "end":"2025-08-10", "limit":50
 
 response = requests.get("https://data.alpaca.markets/v1beta1/news", headers=headers, params=params, include_content=True)
 
-print(response.status_code)
-print(response.text)
+def convert_timezone(source_time) -> str:
+    tz.gettz(source_time):

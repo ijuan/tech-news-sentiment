@@ -2,6 +2,7 @@ import os
 import requests
 from dotenv import load_dotenv
 from pathlib import Path
+import datetime
 
 load_dotenv(Path(__file__).parent.parent / ".env")
 api_key = os.getenv("ALPHAVANTAGE_KEY")
