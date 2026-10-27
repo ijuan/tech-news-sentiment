@@ -13,7 +13,7 @@ class Article(BaseModel):
     # Pipeline stages produce new data instead of quietly editing old data.
     model_config = ConfigDict(frozen=True)
 
-    source: str                      # which API: "alpaca" | "finnhub" | "alphavantage"
+    source: str                      # which API: "alpaca" | "finnhub"
     source_id: str                   # that API's id for the article (used to avoid re-inserting it)
     publisher: str                   # who actually wrote it: "Benzinga", "Reuters", ...
     headline: str
@@ -22,5 +22,3 @@ class Article(BaseModel):
     url_is_canonical: bool           # False for Finnhub, whose URLs are redirects
     published_at: AwareDatetime      # Pydantic rejects naive datetimes
     tickers: list[str]               # every ticker the source tagged, unfiltered
-    ticker_relevance: dict[str, float] | None = None   # Alpha Vantage only
-    vendor_sentiment: dict[str, float] | None = None   # Alpha Vantage only; comparison, never labels

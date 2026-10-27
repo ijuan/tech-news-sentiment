@@ -7,7 +7,7 @@ from pathlib import Path
 import pytest
 from pydantic import ValidationError
 
-from src.mappers import from_alpaca, from_alpha_vantage, from_finnhub
+from src.mappers import from_alpaca, from_finnhub
 from src.models import Article
 
 FIXTURES = Path(__file__).parent / "fixtures"
@@ -26,7 +26,6 @@ def test_alpaca_maps_core_fields():
     assert a.url_is_canonical is True
     assert a.published_at == datetime(2025, 8, 9, 5, 4, 8, tzinfo=timezone.utc)
     assert a.tickers == ["AAPL", "GOOG", "GOOGL", "MSFT", "NVDA"]
-    assert a.ticker_relevance is None
 
 
 def test_alpaca_decodes_html_entities():
@@ -56,22 +55,6 @@ def test_finnhub_splits_comma_separated_related():
     assert from_finnhub(raw).tickers == ["AAPL", "MSFT", "NVDA"]
 
 
-# --- Alpha Vantage ---
-
-def test_alpha_vantage_maps_core_fields():
-    a = from_alpha_vantage(load("alphavantage_article.json"))
-    assert a.source == "alphavantage"
-    assert a.source_id == a.url
-    assert a.published_at == datetime(2025, 8, 7, 13, 13, tzinfo=timezone.utc)
-    assert a.tickers == ["COHR", "AAPL"]
-
-
-def test_alpha_vantage_relevance_parsed_as_float():
-    a = from_alpha_vantage(load("alphavantage_article.json"))
-    assert a.ticker_relevance["AAPL"] == pytest.approx(0.854645)
-    assert isinstance(a.vendor_sentiment["AAPL"], float)
-
-
 # --- Contract shared by all sources ---
 
 @pytest.mark.parametrize(
@@ -79,7 +62,6 @@ def test_alpha_vantage_relevance_parsed_as_float():
     [
         (from_alpaca, "alpaca_article.json"),
         (from_finnhub, "finnhub_article.json"),
-        (from_alpha_vantage, "alphavantage_article.json"),
     ],
 )
 def test_every_mapper_returns_aware_utc_article(mapper, fixture):

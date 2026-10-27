@@ -209,13 +209,13 @@ Criteria: real API or stable structure · archive depth ≥ 1 year · free tier 
 covers the watchlist · clean timestamps · terms permit storage ·
 **distinct underlying provider**.
 
-**FINAL — three sources, locked Aug 6. All tested end to end.**
+**FINAL — two sources (Oct 27). Alpha Vantage dropped: its news endpoint went premium-only.**
 
 | Source | Role | Auth | Timestamp | URLs | Notes |
 |---|---|---|---|---|---|
-| **Alpha Vantage** | Backfill | `apikey` query param | `YYYYMMDDTHHMM` | Real publisher | Deepest archive; per-ticker `relevance_score`; 25 req/day but 1000 articles/call; returns 200 on errors |
+| ~~Alpha Vantage~~ | ~~Backfill~~ | `apikey` query param | `YYYYMMDDTHHMM` | Real publisher | **Dropped Oct 27** — NEWS_SENTIMENT now returns "premium endpoint" on free keys. Aug findings (0.85 relevance cutoff, compressed vendor sentiment) kept as research |
 | **Finnhub** | Daily pull | `X-Finnhub-Token` header | Unix int | Finnhub redirect | 60 calls/min; ~1yr history; ~200-250 article response cap, no pagination; one ticker per call |
-| **Alpaca** | Benzinga feed | Two `APCA-` headers | ISO 8601 | Real publisher | 100% Benzinga; multi-symbol array; needs `include_content=true` |
+| **Alpaca** | Backfill + Benzinga feed | Two `APCA-` headers | ISO 8601 | Real publisher | Mostly Benzinga (Oct 27 live run: 89 Benzinga, 31 Fiscal.ai); multi-symbol array; paginated 50/page; all tickers in one call |
 
 Rejected after research (no test needed): Marketaux, Financial Modeling Prep,
 NewsData.io, GNews, GDELT, SEC EDGAR. All viable; none added a *new* problem class.
@@ -247,7 +247,7 @@ NewsData.io, GNews, GDELT, SEC EDGAR. All viable; none added a *new* problem cla
 - [ ] AWS billing alarm
 - [ ] SES production access request filed
 - [ ] Domain verified (DKIM + SPF)
-- [ ] Alpha Vantage educational/open-source quota request emailed
+- [x] Alpha Vantage quota request emailed (moot — endpoint went premium, source dropped Oct 27)
 
 ---
 
@@ -265,3 +265,4 @@ NewsData.io, GNews, GDELT, SEC EDGAR. All viable; none added a *new* problem cla
 | Aug 6 | Watchlist locked at 12 tech tickers | Selected on news volume and naming clarity, not growth outlook — the criterion is whether a stable 30-day baseline is possible |
 | Aug 6 | Source list closed at 3, not 4-6 | Alpaca, Finnhub, Alpha Vantage already give three auth styles, three response shapes, two timestamp formats, one unusable-URL source, and one relevance score. A fourth costs a session and adds no new problem class. Alpaca kept despite Benzinga overlap with Finnhub — that overlap IS the dedupe problem |
 | Aug 6 | 2σ anomaly rule downgraded to a hypothesis | Vendor sentiment is compressed and skewed positive, so σ-based bands are twitchy and asymmetric. Plot real distributions first; percentile thresholds (top/bottom 10%) are the likely replacement |
+| Oct 27 | Alpha Vantage dropped; two sources | NEWS_SENTIMENT now premium-only on free keys (confirmed with a minimal request). Alpaca takes over backfill (deeper archive). Losing AV's relevance_score means the relevance filter is built in-house (company-name match + tag-count cap), measured against hand labels — a stronger bullet than tuning a vendor threshold. Paying (~$50/mo) or adding a replacement source rejected |

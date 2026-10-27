@@ -10,7 +10,6 @@ import html
 from src.models import Article
 from src.timestamps import (
     alpaca_timezone_normalizer,
-    alpha_vantage_timezone_normalizer,
     finnhub_timezone_normalizer,
 )
 
@@ -60,19 +59,3 @@ def from_finnhub(raw: dict) -> Article:
         tickers=_clean_tickers(raw["related"].split(",")),   # a string, not a list
     )
 
-
-def from_alpha_vantage(raw: dict) -> Article:
-    per_ticker = raw.get("ticker_sentiment", [])
-    return Article(
-        source="alphavantage",
-        source_id=raw["url"],                       # AV has no article id; URL is unique
-        publisher=raw["source"],
-        headline=_clean_text(raw["title"]),
-        summary=_clean_text(raw.get("summary")),
-        url=raw["url"],
-        url_is_canonical=True,
-        published_at=alpha_vantage_timezone_normalizer(raw["time_published"]),
-        tickers=_clean_tickers([t["ticker"] for t in per_ticker]),
-        ticker_relevance={t["ticker"]: float(t["relevance_score"]) for t in per_ticker},
-        vendor_sentiment={t["ticker"]: float(t["ticker_sentiment_score"]) for t in per_ticker},
-    )
