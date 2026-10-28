@@ -1,0 +1,16 @@
+# Local Postgres for development. Production uses AWS RDS instead;
+# the code only changes which DATABASE_URL it connects to.
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: news
+      POSTGRES_PASSWORD: news        # local-only password; never used on AWS
+      POSTGRES_DB: news
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data   # keeps your data when the container restarts
+
+volumes:
+  pgdata:
